@@ -4,3 +4,7 @@
 *.elf
 .build/
 /build/
+
+# editor/tooling cruft
+*.swp
+.serena/
