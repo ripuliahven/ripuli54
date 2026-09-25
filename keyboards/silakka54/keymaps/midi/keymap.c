@@ -4,10 +4,13 @@
 #include QMK_KEYBOARD_H
 #include "qmk_midi.h"
 
+// Layers 2-8 are left undefined below (blank/KC_NO) -- free for regular
+// keyboard layers, designed entirely in Vial. MIDI gets pushed to the top
+// of the layer stack (9-11) so it doesn't eat into that range.
 enum layers {
     _BASE = 0,
     _FN,
-    _PIANO,
+    _PIANO = 9,
     _PIANO_SCALE,
     _DRUM,
 };
