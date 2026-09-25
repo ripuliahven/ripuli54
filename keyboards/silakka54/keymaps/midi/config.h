@@ -11,3 +11,8 @@
 
 // Enables the MI_* note/octave/sustain keycodes (not just raw MIDI plumbing)
 #define MIDI_ADVANCED
+
+// Disables the "tap 5 times to lock" behavior for one-shot mods/layers --
+// QMK only locks when this is >1, so 1 keeps pure tap-once-applies-to-next
+// semantics with no accidental locking.
+#define ONESHOT_TAP_TOGGLE 1

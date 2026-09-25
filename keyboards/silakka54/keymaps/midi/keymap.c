@@ -150,6 +150,15 @@ static void piano_scale_key(uint8_t grid_index, bool pressed) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // Escape cancels a pending one-shot mod (OSM) instead of applying it,
+    // so tapping a tap-mod and changing your mind just needs a tap of Esc.
+    // Clearing before the switch means Esc still sends normally afterward,
+    // just with the one-shot mod already dropped.
+    if (keycode == KC_ESC && record->event.pressed) {
+        clear_oneshot_mods();
+        clear_oneshot_locked_mods();
+    }
+
     switch (keycode) {
         case DRM_KICK:  drum_hit(36, record->event.pressed); return false;
         case DRM_SNARE: drum_hit(38, record->event.pressed); return false;
