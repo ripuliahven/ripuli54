@@ -8,3 +8,7 @@
 # editor/tooling cruft
 *.swp
 .serena/
+
+# clangd
+compile_commands.json
+.cache/

@@ -61,6 +61,16 @@ if [ ! -L "$KEYMAP_DST" ]; then
     ln -s ../../../../../keyboards/silakka54/keymaps/midi "$KEYMAP_DST"
 fi
 
+# clangd database. Only regenerated when flag inputs change, and before
+# compiling since generation wipes .build/.
+CDB="$SCRIPT_DIR/compile_commands.json"
+if [ ! -f "$CDB" ] || [ -n "$(find "$KEYMAP_SRC/rules.mk" "$KEYMAP_SRC/config.h" \
+        "$SCRIPT_DIR/build.sh" "$SCRIPT_DIR/util/compiledb.py" -newer "$CDB")" ]; then
+    echo "==> Generating compile_commands.json..."
+    (cd "$QMK_DIR" && qmk generate-compilation-database -kb silakka54 -km midi)
+    python3 "$SCRIPT_DIR/util/compiledb.py" "$QMK_DIR" "$SCRIPT_DIR" "$KEYMAP_SRC"
+fi
+
 echo "==> Compiling..."
 (cd "$QMK_DIR" && qmk compile -kb silakka54 -km midi)
 
