@@ -21,17 +21,29 @@ keyboards/silakka54/keymaps/midi/
 
 ## Building
 
+Requirements: `git`, `python3`, the [qmk CLI](https://docs.qmk.fm/cli)
+(`pip install qmk`), and an ARM GCC toolchain (`arm-none-eabi-gcc` plus newlib;
+e.g. `gcc-arm-none-eabi` + `libnewlib-arm-none-eabi` on Debian/Ubuntu).
+
 ```bash
-git clone https://github.com/RAvenGEr/vial-qmk-silakka54.git
-cd vial-qmk-silakka54
-git submodule update --init --depth 1 lib/pico-sdk lib/chibios lib/chibios-contrib lib/lufa lib/printf
-
-cp -r /path/to/ripuli54/keyboards/silakka54/keymaps/midi keyboards/silakka54/keymaps/
-
-qmk compile -kb silakka54 -km midi
+./build.sh
 ```
 
-This produces `.build/silakka54_midi.uf2`.
+This fetches the pinned vial-qmk-silakka54 commit and its submodules into
+`build/` (first run only), symlinks the keymap into it, and produces
+`build/vial-qmk-silakka54/.build/silakka54_midi.uf2`. Just edit the files under
+`keyboards/` and rerun it.
+
+## Editor setup (clangd)
+
+`build.sh` also writes a `compile_commands.json` at the repo root (plus a
+`.clangd` that strips ARM-only flags), so any clangd-based editor gets
+completion and diagnostics for `keymap.c` against the real QMK headers. Run
+`./build.sh` once after cloning, then open the repo; go-to-definition into QMK
+sources works too.
+
+The database is only regenerated when `rules.mk`, `config.h` or the QMK pin
+change, so editing `keymap.c` doesn't slow the build down.
 
 ## Flashing
 
@@ -41,7 +53,7 @@ whichever half is connected becomes "left" in the layout):
 
 1. Put that half into bootloader mode. An `RPI-RP2` mass-storage drive
    should appear.
-2. Copy the `.uf2` file onto it: `cp .build/silakka54_midi.uf2 /media/<you>/RPI-RP2/`
+2. Copy the `.uf2` file onto it: `cp build/vial-qmk-silakka54/.build/silakka54_midi.uf2 /media/<you>/RPI-RP2/`
 3. It unmounts itself once the flash completes.
 4. Repeat for the other half.
 
