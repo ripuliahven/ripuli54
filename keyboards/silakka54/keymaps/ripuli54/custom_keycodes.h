@@ -46,7 +46,8 @@ enum custom_keycodes {
 #define ROOT(n) (SC_ROOT0 + (n))
 
 // Scale-select shorthand: SCALE(n) picks SCALES[n] directly (0=major,
-// 1=minor, 2=major penta, 3=minor penta, 4=chromatic).
+// 1=minor, 2=harmonic minor, 3=melodic minor, 4=major penta,
+// 5=minor penta, 6=chromatic).
 #define SCALE(n) (SC_SCALE0 + (n))
 
 #endif // MIDI_ENABLE
