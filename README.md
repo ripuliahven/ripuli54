@@ -10,7 +10,7 @@ dependency — see below.
 ## What's here
 
 ```
-keyboards/silakka54/keymaps/midi/
+keyboards/silakka54/keymaps/ripuli54/
     keymap.c    -- all the logic: piano scale-degree engine, drum hit/choke
                    handling, root/scale pickers, custom keycodes, layers
     config.h    -- Vial UID/unlock combo, dynamic layer count, MIDI_ADVANCED
@@ -31,7 +31,7 @@ e.g. `gcc-arm-none-eabi` + `libnewlib-arm-none-eabi` on Debian/Ubuntu).
 
 This fetches the pinned vial-qmk-silakka54 commit and its submodules into
 `build/` (first run only), symlinks the keymap into it, and produces
-`build/vial-qmk-silakka54/.build/silakka54_midi.uf2`. Just edit the files under
+`build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2`. Just edit the files under
 `keyboards/` and rerun it.
 
 ## Editor setup (clangd)
@@ -53,7 +53,7 @@ whichever half is connected becomes "left" in the layout):
 
 1. Put that half into bootloader mode. An `RPI-RP2` mass-storage drive
    should appear.
-2. Copy the `.uf2` file onto it: `cp build/vial-qmk-silakka54/.build/silakka54_midi.uf2 /media/<you>/RPI-RP2/`
+2. Copy the `.uf2` file onto it: `cp build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2 /media/<you>/RPI-RP2/`
 3. It unmounts itself once the flash completes.
 4. Repeat for the other half.
 

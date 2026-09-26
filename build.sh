@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds the silakka54 "midi" keymap into a flashable .uf2.
+# Builds the silakka54 "ripuli54" keymap into a flashable .uf2.
 # Fetches the pinned vial-qmk-silakka54 firmware fork under ./build,
 # links this repo's keymap into it, and runs `qmk compile`.
 set -euo pipefail
@@ -9,8 +9,9 @@ QMK_REPO_URL="https://github.com/RAvenGEr/vial-qmk-silakka54.git"
 # Pinned so everyone builds against the same QMK; bump deliberately.
 QMK_REV="02a98ccd7104a9fe1600fced4881dec0060b4416"
 QMK_DIR="$SCRIPT_DIR/build/vial-qmk-silakka54"
-KEYMAP_SRC="$SCRIPT_DIR/keyboards/silakka54/keymaps/midi"
-KEYMAP_DST="$QMK_DIR/keyboards/silakka54/keymaps/midi"
+KEYMAP="ripuli54"
+KEYMAP_SRC="$SCRIPT_DIR/keyboards/silakka54/keymaps/$KEYMAP"
+KEYMAP_DST="$QMK_DIR/keyboards/silakka54/keymaps/$KEYMAP"
 
 if ! command -v qmk >/dev/null 2>&1; then
     echo "error: qmk CLI not found on PATH (pip install qmk)" >&2
@@ -56,9 +57,9 @@ fi
 
 # Symlinked (not copied) so the build and clangd always see the live files.
 if [ ! -L "$KEYMAP_DST" ]; then
-    echo "==> Linking midi keymap into the QMK tree..."
+    echo "==> Linking $KEYMAP keymap into the QMK tree..."
     rm -rf "$KEYMAP_DST"
-    ln -s ../../../../../keyboards/silakka54/keymaps/midi "$KEYMAP_DST"
+    ln -s "../../../../../keyboards/silakka54/keymaps/$KEYMAP" "$KEYMAP_DST"
 fi
 
 # clangd database. Only regenerated when flag inputs change, and before
@@ -67,14 +68,14 @@ CDB="$SCRIPT_DIR/compile_commands.json"
 if [ ! -f "$CDB" ] || [ -n "$(find "$KEYMAP_SRC/rules.mk" "$KEYMAP_SRC/config.h" \
         "$SCRIPT_DIR/build.sh" "$SCRIPT_DIR/util/compiledb.py" -newer "$CDB")" ]; then
     echo "==> Generating compile_commands.json..."
-    (cd "$QMK_DIR" && qmk generate-compilation-database -kb silakka54 -km midi)
+    (cd "$QMK_DIR" && qmk generate-compilation-database -kb silakka54 -km "$KEYMAP")
     python3 "$SCRIPT_DIR/util/compiledb.py" "$QMK_DIR" "$SCRIPT_DIR" "$KEYMAP_SRC"
 fi
 
 echo "==> Compiling..."
-(cd "$QMK_DIR" && qmk compile -kb silakka54 -km midi)
+(cd "$QMK_DIR" && qmk compile -kb silakka54 -km "$KEYMAP")
 
-UF2="$QMK_DIR/.build/silakka54_midi.uf2"
+UF2="$QMK_DIR/.build/silakka54_$KEYMAP.uf2"
 if [ -f "$UF2" ]; then
     echo "==> Build succeeded: ${UF2#"$SCRIPT_DIR"/}"
 else
