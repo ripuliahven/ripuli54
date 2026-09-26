@@ -1,8 +1,9 @@
 # ripuli54
 
-MIDI keymap for the Silakka54 split keyboard, built on [vial-qmk](https://github.com/RAvenGEr/vial-qmk-silakka54)
-(the PandaKB Silakka54 fork of Vial-QMK). Play piano (with scale/root pickers)
-or a drum kit straight off the keyboard over USB-MIDI.
+Keymap for the Silakka54 split keyboard, built on [vial-qmk](https://github.com/RAvenGEr/vial-qmk-silakka54)
+(the PandaKB Silakka54 fork of Vial-QMK). Besides typing, it can play piano
+(with scale/root pickers) or a drum kit straight off the keyboard over
+USB-MIDI; the MIDI part is optional.
 
 This repo holds only the keymap itself, not a full QMK fork. QMK is a build-time
 dependency — see below.
@@ -11,13 +12,22 @@ dependency — see below.
 
 ```
 keyboards/silakka54/keymaps/ripuli54/
-    keymap.c    -- all the logic: piano scale-degree engine, drum hit/choke
-                   handling, root/scale pickers, custom keycodes, layers
+    keymap.c    -- layers, and process_record_user() chaining the modules
+    osm.c       -- one-shot mods: stack when chorded, Esc cancels them
+    drums.c     -- drum kit: hit/hold counting and cymbal choke (MIDI)
+    piano.c     -- piano scale-degree engine, root/scale pickers (MIDI)
+    custom_keycodes.h -- DRM_*/SC_* keycodes and layout shorthands (MIDI)
     config.h    -- Vial UID/unlock combo, dynamic layer count, MIDI_ADVANCED
-    rules.mk    -- feature flags (MIDI_ENABLE, VIAL_ENABLE) and debounce type
+    rules.mk    -- feature flags (MIDI_ENABLE, VIAL_ENABLE), sources, debounce
     vial.json   -- physical layout geometry for the Vial GUI (copied from
                    the stock silakka54 vial keymap, unmodified)
 ```
+
+### Without MIDI
+
+Set `MIDI_ENABLE = no` in `rules.mk` to build just the typing layers: the
+drum/piano modules and layers are left out, the Fn-layer MIDI toggles become
+transparent, and Vial gets 9 layers instead of 12.
 
 ## Building
 
@@ -38,12 +48,12 @@ This fetches the pinned vial-qmk-silakka54 commit and its submodules into
 
 `build.sh` also writes a `compile_commands.json` at the repo root (plus a
 `.clangd` that strips ARM-only flags), so any clangd-based editor gets
-completion and diagnostics for `keymap.c` against the real QMK headers. Run
-`./build.sh` once after cloning, then open the repo; go-to-definition into QMK
-sources works too.
+completion and diagnostics for the keymap sources against the real QMK
+headers. Run `./build.sh` once after cloning, then open the repo;
+go-to-definition into QMK sources works too.
 
 The database is only regenerated when `rules.mk`, `config.h` or the QMK pin
-change, so editing `keymap.c` doesn't slow the build down.
+change, so editing the `.c` files doesn't slow the build down.
 
 ## Flashing
 
@@ -92,7 +102,7 @@ printf 'gain 3\n' | nc localhost 9800
 - **Base**: normal typing layer.
 - **Fn**: nav/F-keys; also holds `EE_CLR`, `QK_BOOT`, and toggles into Piano/Drum.
 - **Piano**: 3x6 grid per hand, each key a *signed scale degree* relative to
-  one shared root (`PIANO_KEY_DEGREES[]` in `keymap.c`), not a fixed note --
+  one shared root (`PIANO_KEY_DEGREES[]` in `piano.c`), not a fixed note --
   degree 0 is the root, negative goes below it. The top row picks the root
   directly (A-G#, no hold needed); holding the right-thumb key turns that
   same row into a scale picker instead (major/minor/harmonic minor/melodic
@@ -100,5 +110,5 @@ printf 'gain 3\n' | nc localhost 9800
 - **Drum**: a General MIDI kit across channel 10, with a choke key to kill
   ringing cymbals on demand.
 
-See the comments in `keymap.c` for the exact per-key layout -- it's been
-reshuffled a few times and is the source of truth.
+See the comments in `keymap.c` and `piano.c` for the exact per-key layout --
+it's been reshuffled a few times and is the source of truth.
