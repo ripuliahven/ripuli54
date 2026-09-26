@@ -44,6 +44,26 @@ This fetches the pinned vial-qmk-silakka54 commit and its submodules into
 `build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2`. Just edit the files under
 `keyboards/` and rerun it.
 
+### On Windows (WSL2)
+
+`build.sh` needs a Linux shell, so use WSL2 (from an admin PowerShell:
+`wsl --install -d Ubuntu`, then reboot). Inside Ubuntu, install the
+requirements:
+
+```bash
+sudo apt update && sudo apt install -y git pipx gcc-arm-none-eabi libnewlib-arm-none-eabi
+pipx install qmk && pipx ensurepath
+```
+
+Clone into the Linux home directory (e.g. `~/ripuli54`), not under `/mnt/c/`
+-- builds on the Windows drive are very slow, and symlinks/permissions
+misbehave there. Then run `./build.sh` as above.
+
+WSL can't see the `RPI-RP2` drive the way the Flashing steps below assume, so
+copy the `.uf2` from the Windows side instead: open
+`\\wsl$\Ubuntu\home\<you>\ripuli54\build\vial-qmk-silakka54\.build\` in
+Explorer and drag the file onto the drive.
+
 ## Editor setup (clangd)
 
 `build.sh` also writes a `compile_commands.json` at the repo root (plus a
