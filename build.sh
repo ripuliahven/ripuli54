@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # Builds the silakka54 "midi" keymap into a flashable .uf2.
-# Clones/updates the vial-qmk-silakka54 firmware fork under ./build,
+# Fetches the pinned vial-qmk-silakka54 firmware fork under ./build,
 # drops this repo's keymap into it, and runs `qmk compile`.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 QMK_REPO_URL="https://github.com/RAvenGEr/vial-qmk-silakka54.git"
+# Pinned so everyone builds against the same QMK; bump deliberately.
+QMK_REV="02a98ccd7104a9fe1600fced4881dec0060b4416"
 QMK_DIR="$SCRIPT_DIR/build/vial-qmk-silakka54"
 KEYMAP_SRC="$SCRIPT_DIR/keyboards/silakka54/keymaps/midi"
 KEYMAP_DST="$QMK_DIR/keyboards/silakka54/keymaps/midi"
@@ -15,9 +17,16 @@ if ! command -v qmk >/dev/null 2>&1; then
     exit 1
 fi
 
-if [ ! -d "$QMK_DIR" ]; then
-    echo "==> Cloning vial-qmk-silakka54 into build/..."
-    git clone "$QMK_REPO_URL" "$QMK_DIR"
+if [ ! -d "$QMK_DIR/.git" ]; then
+    git init -q "$QMK_DIR"
+    git -C "$QMK_DIR" remote add origin "$QMK_REPO_URL"
+fi
+
+if [ "$(git -C "$QMK_DIR" rev-parse -q --verify HEAD || true)" != "$QMK_REV" ]; then
+    echo "==> Checking out vial-qmk-silakka54 @ ${QMK_REV:0:10} into build/..."
+    git -C "$QMK_DIR" fetch --depth 1 origin "$QMK_REV"
+    # --force drops the build_id.py patch; it's reapplied below.
+    git -C "$QMK_DIR" checkout -q --force FETCH_HEAD
 fi
 
 echo "==> Fetching required submodules..."
