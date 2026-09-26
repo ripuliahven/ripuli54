@@ -5,7 +5,7 @@ LAYER_LOCK_ENABLE = yes
 KEY_OVERRIDE_ENABLE = yes
 MIDI_ENABLE = yes
 
-SRC += osm.c drums.c
+SRC += osm.c drums.c piano.c
 
 # Default (sym_defer_g) debounces the whole half's matrix as one unit, so fast
 # repeated hits on two keys sharing a half (e.g. stacked drum pads) can get
