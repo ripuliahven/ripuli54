@@ -13,16 +13,36 @@
 enum layers {
     _BASE = 0,
     _FN,
+#ifdef MIDI_ENABLE
     _PIANO = 9,
     _PIANO_SCALE,
     _DRUM,
+#endif
 };
+
+// Fn thumb keys that latch into the MIDI layers; plain Fn without MIDI.
+#ifdef MIDI_ENABLE
+#    define FN_PIANO TG(_PIANO)
+#    define FN_DRUM TG(_DRUM)
+#else
+#    define FN_PIANO KC_TRNS
+#    define FN_DRUM KC_TRNS
+#endif
 
 // Each module returns false once it has handled the key.
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    return process_record_osm(keycode, record) &&
-           process_record_drums(keycode, record) &&
-           process_record_piano(keycode, record);
+    if (!process_record_osm(keycode, record)) {
+        return false;
+    }
+#ifdef MIDI_ENABLE
+    if (!process_record_drums(keycode, record)) {
+        return false;
+    }
+    if (!process_record_piano(keycode, record)) {
+        return false;
+    }
+#endif
+    return true;
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -42,9 +62,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_PGUP, KC_PGDN, KC_HOME, KC_END,  KC_DEL,  KC_F12,
         KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_LBRC, KC_RBRC,
         KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-                                            KC_TRNS, KC_TRNS, TG(_PIANO),      TG(_DRUM), EE_CLR,  QK_BOOT
+                                            KC_TRNS, KC_TRNS, FN_PIANO,        FN_DRUM,   EE_CLR,  QK_BOOT
     ),
 
+#ifdef MIDI_ENABLE
     // Piano layer: see PIANO_KEY_DEGREES in piano.c for which key plays which
     // degree -- by default the root sits at R(0) (right hand bottom-left),
     // with the left hand continuing downward into negative degrees. The top
@@ -84,5 +105,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         DRM_HHCL, DRM_HHCL,   DRM_HHOP,   DRM_HHPD,  DRM_RIM,     DRM_TOMH,                DRM_TOMH, DRM_TOMM, DRM_TOMH, DRM_CRASH, DRM_RIDE, DRM_KICK,
         DRM_HHCL, DRM_HHCL,   DRM_HHOP,   DRM_HHPD,  DRM_RIM,     DRM_KICK,                DRM_KICK, DRM_TOMM, DRM_TOMH, DRM_CRASH, DRM_RIDE, DRM_KICK,
                                             TO(_BASE), KC_TRNS, DRM_SNARE,      DRM_SNARE, MI_AOFF,  DRM_CHOKE
-    )
+    ),
+#endif
 };

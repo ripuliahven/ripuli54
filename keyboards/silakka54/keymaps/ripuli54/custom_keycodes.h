@@ -4,6 +4,9 @@
 
 #include "quantum.h"
 
+// All custom keycodes belong to the MIDI modules.
+#ifdef MIDI_ENABLE
+
 // Piano grid: 3x6 keys per hand.
 #define HAND_GRID_SIZE 18
 #define PIANO_GRID_SIZE (HAND_GRID_SIZE * 2)
@@ -45,3 +48,5 @@ enum custom_keycodes {
 // Scale-select shorthand: SCALE(n) picks SCALES[n] directly (0=major,
 // 1=minor, 2=major penta, 3=minor penta, 4=chromatic).
 #define SCALE(n) (SC_SCALE0 + (n))
+
+#endif // MIDI_ENABLE

@@ -3,9 +3,13 @@ VIAL_ENABLE = yes
 CAPS_WORD_ENABLE = yes
 LAYER_LOCK_ENABLE = yes
 KEY_OVERRIDE_ENABLE = yes
+# Set to no to drop the piano and drum layers.
 MIDI_ENABLE = yes
 
-SRC += osm.c drums.c piano.c
+SRC += osm.c
+ifeq ($(strip $(MIDI_ENABLE)), yes)
+    SRC += drums.c piano.c
+endif
 
 # Default (sym_defer_g) debounces the whole half's matrix as one unit, so fast
 # repeated hits on two keys sharing a half (e.g. stacked drum pads) can get
