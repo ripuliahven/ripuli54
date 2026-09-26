@@ -2,7 +2,7 @@
 """Build a clangd compile_commands.json at the repo root from QMK's one.
 
 keymap.c is never compiled directly (keymap_introspection.c #includes it),
-so we add an entry for it reusing that TU's flags.
+so keymap .c files QMK didn't compile get an entry reusing that TU's flags.
 """
 import json
 import sys
@@ -16,8 +16,10 @@ for e in entries:
     e["file"] = str((Path(e["directory"]) / e["file"]).resolve())
 
 host = next(e for e in entries if e["file"].endswith("quantum/keymap_introspection.c"))
+known = {e["file"] for e in entries}
 for src in sorted(keymap_dir.glob("*.c")):
-    entries.append({**host, "file": str(src)})
+    if str(src) not in known:
+        entries.append({**host, "file": str(src)})
 
 out = repo_dir / "compile_commands.json"
 out.write_text(json.dumps(entries, indent=2) + "\n")
