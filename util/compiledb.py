@@ -18,8 +18,15 @@ for e in entries:
 host = next(e for e in entries if e["file"].endswith("quantum/keymap_introspection.c"))
 known = {e["file"] for e in entries}
 for src in sorted(keymap_dir.glob("*.c")):
-    if str(src) not in known:
-        entries.append({**host, "file": str(src)})
+    if str(src) in known:
+        continue
+    cmd = host["command"]
+    # With MIDI_ENABLE = no the MIDI modules aren't built; give them the MIDI
+    # flags anyway so clangd can still check them.
+    if src.name != "keymap.c" and "-DMIDI_ENABLE" not in cmd:
+        compiler, rest = cmd.split(" ", 1)
+        cmd = f"{compiler} -DMIDI_ENABLE -Iquantum/midi {rest}"
+    entries.append({**host, "command": cmd, "file": str(src)})
 
 out = repo_dir / "compile_commands.json"
 out.write_text(json.dumps(entries, indent=2) + "\n")
