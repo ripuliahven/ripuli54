@@ -16,3 +16,6 @@
 // QMK only locks when this is >1, so 1 keeps pure tap-once-applies-to-next
 // semantics with no accidental locking.
 #define ONESHOT_TAP_TOGGLE 1
+
+// Debounce window (default 5 ms); longer filters chatter on worn switches.
+#define DEBOUNCE 10
