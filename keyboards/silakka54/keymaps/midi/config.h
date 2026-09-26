@@ -17,5 +17,8 @@
 // semantics with no accidental locking.
 #define ONESHOT_TAP_TOGGLE 1
 
+// Queued one-shot mods never expire; only a non-mod key or Esc clears them.
+#define ONESHOT_TIMEOUT 0
+
 // Debounce window (default 5 ms); longer filters chatter on worn switches.
 #define DEBOUNCE 10
