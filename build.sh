@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds the silakka54 "midi" keymap into a flashable .uf2.
 # Fetches the pinned vial-qmk-silakka54 firmware fork under ./build,
-# drops this repo's keymap into it, and runs `qmk compile`.
+# links this repo's keymap into it, and runs `qmk compile`.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -54,9 +54,12 @@ if __name__ == "__main__":
 EOF
 fi
 
-echo "==> Copying midi keymap..."
-rm -rf "$KEYMAP_DST"
-cp -r "$KEYMAP_SRC" "$KEYMAP_DST"
+# Symlinked (not copied) so the build and clangd always see the live files.
+if [ ! -L "$KEYMAP_DST" ]; then
+    echo "==> Linking midi keymap into the QMK tree..."
+    rm -rf "$KEYMAP_DST"
+    ln -s ../../../../../keyboards/silakka54/keymaps/midi "$KEYMAP_DST"
+fi
 
 echo "==> Compiling..."
 (cd "$QMK_DIR" && qmk compile -kb silakka54 -km midi)
