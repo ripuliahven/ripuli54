@@ -4,8 +4,6 @@
 
 bool process_record_osm(uint16_t keycode, keyrecord_t *record) {
     // Escape cancels a pending one-shot mod (OSM) instead of applying it,
-    // so tapping a tap-mod and changing your mind just needs a tap of Esc.
-    // Esc itself still sends normally, just with the mod already dropped.
     if (keycode == KC_ESC && record->event.pressed) {
         clear_oneshot_mods();
         clear_oneshot_locked_mods();
