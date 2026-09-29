@@ -1,12 +1,126 @@
+**Note: a clanker was very involved in the firmware changes and build automation.**
+
+**Thanks to [Squalius Cephalus](https://github.com/Squalius-cephalus/silakka54)** for designing a cheap ergo-keyboard in the first place.
+
 # ripuli54
+A keymap for Silakka54 intended as the starting point (first and/or final layout) for someone coming from standard finnish/swedish keyboards.
 
-Keymap for the Silakka54 split keyboard, built on [vial-qmk](https://github.com/RAvenGEr/vial-qmk-silakka54)
-(the PandaKB Silakka54 fork of Vial-QMK). Besides typing, it can play piano
-(with scale/root pickers) or a drum kit straight off the keyboard over
-USB-MIDI; the MIDI part is optional.
+## The Layout
+The majority of relevant characters, symbols, and modifiers are available in familiar positions at least in the relative sense.
+The goal is that you can pretty much start typing like you used to. A lot of personal bias there ofc.
 
-This repo holds only the keymap itself, not a full QMK fork. QMK is a build-time
-dependency — see below.
+![ripuli54](pics/ripuli54v001.png "ripuli54")
+
+### Base Layer: Natural Language
+
+For natural language production mainly in english, finnish, and swedish, prioritized in that order. You're mostly talking to a clanker anyway aren't you.
+
+Only two major things to learn:
+
+1) Because english is prioritized 'ä' and 'ö' come from the dead key right to 'L'. 'Å' gets the hardest to reach position since it's rare in the prioritization.
+2) Right thumb for Return.
+
+### Modifier Layers
+
+The most important ergonomic change. A regular keyboard itself would be 80% better with just this change: sticky mods.
+
+NOTE: Regular home-row-mods SUCK and most "minimal keyboard" solutions depend on them. That is "hold for mod, tap gives the regular character." They break as soon as you try to do things fast and you end up fighting with timings etc. Don't take this rabbit hole. You've been warned.
+
+#### Single Modifiers 
+Here the modifiers and the mod-layers themselves are one-shots. I.e. they activate on single taps, allowing roll typing.
+
+That is, just tapping the thumb key for left- or right-hand mods keeps the mod layer active until you either:
+1) Press a modifier
+2) Press a transparent key
+3) Press Escape (an explicit mod cancel)
+
+The benefits are:
+1) Not getting accidental mod behavior when typing fast, like with regular home-row-mods.
+2) Being able to roll type symbols and single-mod shortcuts.
+
+E.g. single mod shortcuts like Ctrl-V (paste) or GUI-number (change desktop) don't require awkward finger-yoga, just three consequtive taps that can even be on separate hands:
+- tap mod-layer-key
+- tap mod
+- tap final key
+
+Same goes for the worst way to get certain symbols that is **AltGr**, cursed be it's name. E.g. typing '{' on a regular keyboard is an offense to the wrist. Here you just activate the mod with two taps, then tap '7'. Here it's just three taps which you can do on alternate hands.
+
+#### Multiple Modifiers
+
+Multi-mod shortcuts can't be rolled completely, but as long as the mod-layer key is held they will stack.
+
+So Ctrl-Shift-V looks like:
+- hold mod-layer key
+- activate the mods you want
+- let go and press the final key.
+
+#### Sending a Lone Modifier
+
+A double tap on a mod while the mod-layer key's held sends just the mod alone.
+
+This is useful for e.g. opening the Windows Start Menu: hold mod-key, double-tap the mod. 
+
+## How to Build
+
+### Linux
+Requirements: `git`, `python3`, the [qmk CLI](https://docs.qmk.fm/cli)
+(`pip install qmk`), and an ARM GCC toolchain (`arm-none-eabi-gcc` plus newlib;
+e.g. `gcc-arm-none-eabi` + `libnewlib-arm-none-eabi` on Debian/Ubuntu).
+
+```bash
+./build.sh
+```
+
+This fetches the pinned vial-qmk-silakka54 commit and its submodules into
+`build/` (first run only), symlinks the keymap into it, and produces
+`build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2`.
+
+So the build script not only builds, but sets up a dev-environment. Just edit the files under `keyboards/` and rerun it.
+
+### Windows (WSL2) **UNTESTED**
+`build.sh` needs a Linux shell, so use WSL2 (from an admin PowerShell:
+`wsl --install -d Ubuntu`, then reboot). Inside Ubuntu, install the
+requirements:
+
+```bash
+sudo apt update && sudo apt install -y git pipx gcc-arm-none-eabi libnewlib-arm-none-eabi
+pipx install qmk && pipx ensurepath
+probably also make and build-essential
+```
+
+Clone into the Linux home directory (e.g. `~/ripuli54`), not under `/mnt/c/`
+since builds on the Windows drive are very slow, and symlinks/permissions
+misbehave there. Then run `./build.sh` as above.
+
+## How to Flash
+
+NOTE: before flashing backup your Vial-config if you have one
+
+The build outputs `build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2` which is the file you flash with.
+
+Both halves have to be flashed separately, but it's a simple copy-paste procedure:
+1) Disconnect the keyboard
+2) Reconnect **the left half** while holding the BOOT-button on the RP2040-Zero
+3) You should get a mount-point like /media/<user>/RPI-RP2/
+4) Copy the .ut2 file there and dismount
+5) Repeat for the right half
+6) Reconnect the left half normally
+7) In Vial, load vial/ripuli43.vil
+
+After flashing a structural change (a layer added/removed, or anything that
+shifts layer indices), press `EE_CLR` once on the keyboard -- Vial's dynamic
+keymap lives in EEPROM and needs to resync with the new compiled layout.
+
+## Editor setup (clangd)
+
+`build.sh` also writes a `compile_commands.json` at the repo root (plus a
+`.clangd` that strips ARM-only flags), so any clangd-based editor gets
+completion and diagnostics for the keymap sources against the real QMK
+headers. Run `./build.sh` once after cloning, then open the repo;
+go-to-definition into QMK sources works too.
+
+The database is only regenerated when `rules.mk`, `config.h` or the QMK pin
+change, so editing the `.c` files doesn't slow the build down.
 
 ## What's here
 
@@ -24,111 +138,11 @@ keyboards/silakka54/keymaps/ripuli54/
 ```
 
 ### Without MIDI
-
 Set `MIDI_ENABLE = no` in `rules.mk` to build just the typing layers: the
-drum/piano modules and layers are left out, the Fn-layer MIDI toggles become
+"m"sddrum/piano modules and layers are left out, the Fn-layer MIDI toggles become
 transparent, and Vial gets 9 layers instead of 12.
 
-## Building
 
-Requirements: `git`, `python3`, the [qmk CLI](https://docs.qmk.fm/cli)
-(`pip install qmk`), and an ARM GCC toolchain (`arm-none-eabi-gcc` plus newlib;
-e.g. `gcc-arm-none-eabi` + `libnewlib-arm-none-eabi` on Debian/Ubuntu).
-
-```bash
-./build.sh
-```
-
-This fetches the pinned vial-qmk-silakka54 commit and its submodules into
-`build/` (first run only), symlinks the keymap into it, and produces
-`build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2`. Just edit the files under
-`keyboards/` and rerun it.
-
-### On Windows (WSL2)
-
-`build.sh` needs a Linux shell, so use WSL2 (from an admin PowerShell:
-`wsl --install -d Ubuntu`, then reboot). Inside Ubuntu, install the
-requirements:
-
-```bash
-sudo apt update && sudo apt install -y git pipx gcc-arm-none-eabi libnewlib-arm-none-eabi
-pipx install qmk && pipx ensurepath
-```
-
-Clone into the Linux home directory (e.g. `~/ripuli54`), not under `/mnt/c/`
--- builds on the Windows drive are very slow, and symlinks/permissions
-misbehave there. Then run `./build.sh` as above.
-
-WSL can't see the `RPI-RP2` drive the way the Flashing steps below assume, so
-copy the `.uf2` from the Windows side instead: open
-`\\wsl$\Ubuntu\home\<you>\ripuli54\build\vial-qmk-silakka54\.build\` in
-Explorer and drag the file onto the drive.
-
-## Editor setup (clangd)
-
-`build.sh` also writes a `compile_commands.json` at the repo root (plus a
-`.clangd` that strips ARM-only flags), so any clangd-based editor gets
-completion and diagnostics for the keymap sources against the real QMK
-headers. Run `./build.sh` once after cloning, then open the repo;
-go-to-definition into QMK sources works too.
-
-The database is only regenerated when `rules.mk`, `config.h` or the QMK pin
-change, so editing the `.c` files doesn't slow the build down.
 
 ## Flashing
 
-Each half of the split keyboard is flashed independently, over whichever half
-is plugged into USB (there's no hardware-defined handedness on this board --
-whichever half is connected becomes "left" in the layout):
-
-1. Put that half into bootloader mode. An `RPI-RP2` mass-storage drive
-   should appear.
-2. Copy the `.uf2` file onto it: `cp build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2 /media/<you>/RPI-RP2/`
-3. It unmounts itself once the flash completes.
-4. Repeat for the other half.
-
-After flashing a structural change (a layer added/removed, or anything that
-shifts layer indices), press `EE_CLR` once on the keyboard -- Vial's dynamic
-keymap lives in EEPROM and needs to resync with the new compiled layout.
-
-## Playing it
-
-The keyboard sends raw MIDI over USB; you need a synth listening on the other
-end. [fluidsynth](https://www.fluidsynth.org/) works reliably (unlike some
-DAWs' soundfont players, which can smear together rapid same-note retriggers
-like double-bass drum rolls):
-
-```bash
-fluidsynth -s -i -a pulseaudio -m alsa_seq -o synth.polyphony=256 \
-    /usr/share/sounds/sf2/FluidR3_GM.sf2 < /dev/null > /tmp/fluidsynth.log 2>&1 &
-```
-
-Then connect the keyboard's MIDI output to it (needed again after every
-reflash or fluidsynth restart, since the ALSA client re-enumerates):
-
-```bash
-aconnect silakka54 "FLUID Synth"
-```
-
-To boost fluidsynth's own volume live without restarting it (which would
-drop the connection above):
-
-```bash
-printf 'gain 3\n' | nc localhost 9800
-```
-
-## Layers
-
-- **Base**: normal typing layer.
-- **Fn**: nav/F-keys; also holds `EE_CLR`, `QK_BOOT`, and toggles into Piano/Drum.
-- **Piano**: 3x6 grid per hand, each key a *signed scale degree* relative to
-  one shared root (`PIANO_KEY_DEGREES[]` in `piano.c`), not a fixed note --
-  degree 0 is the root, negative goes below it. The top row picks the root
-  directly (A-G#, no hold needed); holding the right-thumb key turns that
-  same row into a scale picker instead (major/minor/harmonic minor/melodic
-  minor/major & minor pentatonic/chromatic).
-- **Drum**: a General MIDI kit across channel 10, with a choke key to kill
-  ringing cymbals on demand.
-
-See the comments in `keymap.c` and `piano.c` for the exact per-key layout --
-it's been reshuffled a few times and is the source of truth.
