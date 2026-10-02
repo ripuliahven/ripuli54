@@ -108,6 +108,14 @@ Both halves have to be flashed separately, but it's a simple copy-paste procedur
 After flashing a structural change (a layer added/removed, or anything that
 shifts layer indices), press `EE_CLR` once on the keyboard -- Vial's dynamic
 keymap lives in EEPROM and needs to resync with the new compiled layout.
+`EE_CLR` restores the layers from `vial/ripuli54.vil`, but not combos, tap
+dances or key overrides: load the `.vil` in Vial to get those back.
+
+## Changing the Layout
+
+`vial/ripuli54.vil` is the source of truth for the layers. Edit in Vial, save
+the layout over that file, and rerun `./build.sh`: it regenerates the
+firmware's default layers (`keymap_vil.h`) from it via `util/vil2keymap.py`.
 
 ## Editor setup (clangd)
 
@@ -124,11 +132,12 @@ change, so editing the `.c` files doesn't slow the build down.
 
 ```
 keyboards/silakka54/keymaps/ripuli54/
-    keymap.c    -- layers, and process_record_user() chaining the modules
+    keymap.c    -- process_record_user() chaining the modules; layers come
+                   from vial/ripuli54.vil (see Changing the Layout)
     osm.c       -- one-shot mods: stack when chorded, Esc cancels them
     drums.c     -- drum kit: hit/hold counting and cymbal choke (MIDI)
     piano.c     -- piano scale-degree engine, root/scale pickers (MIDI)
-    custom_keycodes.h -- DRM_*/SC_* keycodes and layout shorthands (MIDI)
+    custom_keycodes.h -- DRM_*/SC_* keycodes (MIDI)
     config.h    -- Vial UID/unlock combo, dynamic layer count, MIDI_ADVANCED
     rules.mk    -- feature flags (MIDI_ENABLE, VIAL_ENABLE), sources, debounce
     vial.json   -- physical layout geometry for the Vial GUI (copied from
@@ -137,8 +146,8 @@ keyboards/silakka54/keymaps/ripuli54/
 
 ### Without MIDI
 Set `MIDI_ENABLE = no` in `rules.mk` to build just the typing layers: the
-"m"sddrum/piano modules and layers are left out, the Fn-layer MIDI toggles become
-transparent, and Vial gets 9 layers instead of 12.
+drum/piano modules and layers are left out, and Vial gets 9 layers instead
+of 12.
 
 
 
