@@ -108,14 +108,21 @@ Both halves have to be flashed separately, but it's a simple copy-paste procedur
 After flashing a structural change (a layer added/removed, or anything that
 shifts layer indices), press `EE_CLR` once on the keyboard -- Vial's dynamic
 keymap lives in EEPROM and needs to resync with the new compiled layout.
-`EE_CLR` restores the layers from `vial/ripuli54.vil`, but not combos, tap
-dances or key overrides: load the `.vil` in Vial to get those back.
+`EE_CLR` restores the firmware's default layers (`keymap_vil.h`), but not
+combos, tap dances or key overrides: load the `.vil` in Vial to get those back.
 
 ## Changing the Layout
 
-`vial/ripuli54.vil` is the source of truth for the layers. Edit in Vial, save
-the layout over that file, and rerun `./build.sh`: it regenerates the
-firmware's default layers (`keymap_vil.h`) from it via `util/vil2keymap.py`.
+Edit in Vial and save the layout over `vial/ripuli54.vil`. The firmware's
+default layers (`keymap_vil.h`, what `EE_CLR` restores) only change when you
+choose to update them from the `.vil`:
+
+```bash
+./util/vil2keymap.py
+```
+
+Then rerun `./build.sh`. The script needs `build/` to exist, so run
+`./build.sh` once after cloning.
 
 ## Editor setup (clangd)
 
