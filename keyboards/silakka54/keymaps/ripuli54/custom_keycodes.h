@@ -12,8 +12,10 @@
 #define PIANO_GRID_SIZE (HAND_GRID_SIZE * 2)
 #define NUM_SCALES 7 // entries in SCALES[] (piano)
 
-enum custom_keycodes {
-    DRM_KICK = SAFE_RANGE, // 36 Bass Drum 1
+// Drums live in QK_KB (0x7E00-0x7E3F), which Vial names via customKeycodes
+// in vial.json -- keep the two lists in the same order.
+enum drum_keycodes {
+    DRM_KICK = QK_KB_0,    // 36 Bass Drum 1
     DRM_SNARE,             // 38 Acoustic Snare
     DRM_RIM,               // 37 Side Stick
     DRM_CLAP,              // 39 Hand Clap
@@ -31,7 +33,12 @@ enum custom_keycodes {
     DRM_CHINA,             // 52 Chinese Cymbal
     DRM_RIDEBELL,          // 53 Ride Bell
     DRM_CHOKE,             // silences all currently-ringing cymbals
-    SC_KEY0,                                  // reserves SC_KEY0 .. SC_KEY0+PIANO_GRID_SIZE-1
+};
+_Static_assert((uint16_t)DRM_CHOKE <= (uint16_t)QK_KB_MAX, "drum keycodes overflow Vial's custom range");
+
+// Piano stays in QK_USER: positional, so Vial shows these as hex.
+enum piano_keycodes {
+    SC_KEY0 = SAFE_RANGE,                     // reserves SC_KEY0 .. SC_KEY0+PIANO_GRID_SIZE-1
     SC_SCALE0 = SC_KEY0 + PIANO_GRID_SIZE,     // reserves SC_SCALE0 .. SC_SCALE0+NUM_SCALES-1 (index into SCALES[])
     SC_ROOT0 = SC_SCALE0 + NUM_SCALES,        // reserves SC_ROOT0 .. SC_ROOT0+11 (see ROOT_SEMITONES)
 };
