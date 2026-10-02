@@ -3,6 +3,26 @@
         "rows": 10,
         "cols": 6
     },
+    "customKeycodes": [
+        { "name": "DRM_KICK", "title": "Kick: Bass Drum 1 (note 36)", "shortName": "Kick" },
+        { "name": "DRM_SNARE", "title": "Snare: Acoustic Snare (note 38)", "shortName": "Snare" },
+        { "name": "DRM_RIM", "title": "Rim: Side Stick (note 37)", "shortName": "Rim" },
+        { "name": "DRM_CLAP", "title": "Clap: Hand Clap (note 39)", "shortName": "Clap" },
+        { "name": "DRM_HHCL", "title": "Hi-Hat: Closed (note 42)", "shortName": "HH\nClosed" },
+        { "name": "DRM_HHOP", "title": "Hi-Hat: Open (note 46)", "shortName": "HH\nOpen" },
+        { "name": "DRM_HHPD", "title": "Hi-Hat: Pedal (note 44)", "shortName": "HH\nPedal" },
+        { "name": "DRM_TOML", "title": "Tom: Low (note 45)", "shortName": "Tom\nLow" },
+        { "name": "DRM_TOMM", "title": "Tom: Mid (note 47)", "shortName": "Tom\nMid" },
+        { "name": "DRM_TOMH", "title": "Tom: High (note 50)", "shortName": "Tom\nHigh" },
+        { "name": "DRM_CRASH", "title": "Crash: Crash Cymbal 1 (note 49)", "shortName": "Crash" },
+        { "name": "DRM_RIDE", "title": "Ride: Ride Cymbal 1 (note 51)", "shortName": "Ride" },
+        { "name": "DRM_CRASH2", "title": "Crash 2: Crash Cymbal 2 (note 57)", "shortName": "Crash\n2" },
+        { "name": "DRM_SPLASH", "title": "Splash: Splash Cymbal (note 55)", "shortName": "Splash" },
+        { "name": "DRM_COWBELL", "title": "Cowbell (note 56)", "shortName": "Cow\nbell" },
+        { "name": "DRM_CHINA", "title": "China: Chinese Cymbal (note 52)", "shortName": "China" },
+        { "name": "DRM_RIDEBELL", "title": "Ride Bell (note 53)", "shortName": "Ride\nBell" },
+        { "name": "DRM_CHOKE", "title": "Choke: silences all ringing cymbals", "shortName": "Choke" }
+    ],
     "layouts": {
         "keymap": [
             [{ "x": 2 }, "0,2", "0,3", { "x": 5.25 }, "5,3", "5,2"],
