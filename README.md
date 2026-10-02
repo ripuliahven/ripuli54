@@ -24,24 +24,27 @@ Only two major things to learn:
 
 The most important ergonomic change. A regular keyboard itself would be 80% better with just this change: sticky mods.
 
-NOTE: Regular home-row-mods SUCK and most "minimal keyboard" solutions depend on them. That is "hold for mod, tap gives the regular character." They break as soon as you try to do things fast and you end up fighting with timings etc. Don't take this rabbit hole. You've been warned.
+>NOTE: _Regular home-row-mods SUCK and most "minimal keyboard" solutions depend on them. That is "hold for mod, tap gives the regular character." They break as soon as you try to do things fast and you end up fighting with timings etc. Don't take this rabbit hole. You've been warned._
 
 #### Single Modifiers 
 Here the modifiers and the mod-layers themselves are one-shots. I.e. they activate on single taps, allowing roll typing.
 
-That is, just tapping the thumb key for left- or right-hand mods keeps the mod layer active until you either:
+That is, just tapping either thumb key for mods keeps the mod layer active until you either:
 1) Press a modifier
-2) Press a transparent key
+2) Press a transparent key (applies mod, if any)
 3) Press Escape (an explicit mod cancel)
 
 The benefits are:
 1) Not getting accidental mod behavior when typing fast, like with regular home-row-mods.
 2) Being able to roll type symbols and single-mod shortcuts.
 
-E.g. single mod shortcuts like Ctrl-V (paste) or GUI-number (change desktop) don't require awkward finger-yoga, just three consequtive taps that can even be on separate hands:
+E.g. single mod shortcuts like Ctrl-C (paste) or GUI-number (change desktop) don't require awkward finger-yoga, just three consequtive taps that can even be on separate hands:
 - tap mod-layer-key
 - tap mod
 - tap final key
+
+![ripuli54 Ctrl-C](pics/ripuli54_ctrl_c.gif "ripuli54 Control C")
+>_Example tap-pattern to roll Ctrl-C, both hands or only left handed_
 
 Same goes for the worst way to get certain symbols that is **AltGr**, cursed be it's name. E.g. typing '{' on a regular keyboard is an offense to the wrist. Here you just activate the mod with two taps, then tap '7'.
 
@@ -54,11 +57,14 @@ So Ctrl-Shift-V looks like:
 - activate the mods you want
 - let go and press the final key.
 
+![ripuli54 Ctrl-Shift-V](pics/ripuli54_ctrl_sft_v.gif "ripuli54 Ctrl Shift V")
+>_Dual and single hand examples of Ctrl-Shift-V_
+
 #### Sending a Lone Modifier
 
 A double tap on a mod while the mod-layer key's held sends just the mod alone.
 
-This is useful for e.g. opening the Windows Start Menu: hold mod-key, double-tap the mod. 
+This is useful for e.g. opening the Windows Start Menu: hold mod-key, double-tap the GUI. Or to hold Ctrl while scrolling with the mouse wheel for zoom: hold mod-key, double tap Ctrl. 
 
 ## How to Build
 
@@ -75,7 +81,7 @@ This fetches the pinned vial-qmk-silakka54 commit and its submodules into
 `build/` (first run only), symlinks the keymap into it, and produces
 `build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2`.
 
-So the build script not only builds, but sets up a dev-environment. Just edit the files under `keyboards/` and rerun it.
+So the build script not only builds, but sets up a dev-environment. Just edit the files under `keyboards/` and rerun it and reflash.
 
 ### Windows (WSL2) **UNTESTED**
 `build.sh` needs a Linux shell, so use WSL2 (from an admin PowerShell:
@@ -93,7 +99,7 @@ misbehave there. Then run `./build.sh` as above.
 
 ## How to Flash
 
-NOTE: before flashing backup your Vial-config if you have one
+**NOTE: before flashing backup your Vial-config if you have one**
 
 The build outputs `build/vial-qmk-silakka54/.build/silakka54_ripuli54.uf2` which is the file you flash with.
 
@@ -106,14 +112,14 @@ Both halves have to be flashed separately, but it's a simple copy-paste procedur
 6) Reconnect the left half normally
 
 After flashing a structural change (a layer added/removed, or anything that
-shifts layer indices), press `EE_CLR` once on the keyboard -- Vial's dynamic
+shifts layer indices), press `EE_CLR` once on the keyboard. It's not on the default keymaps but can be easily added in Vial.  Vial's dynamic
 keymap lives in EEPROM and needs to resync with the new compiled layout.
 `EE_CLR` restores the firmware's default layers (`keymap_vil.h`), but not
 combos, tap dances or key overrides: load the `.vil` in Vial to get those back.
 
 ## Changing the Layout
 
-Edit in Vial and save the layout over `vial/ripuli54.vil`. The firmware's
+Edit in Vial and either save the layout over `vial/ripuli54.vil` or create your own backup. The firmware's
 default layers (`keymap_vil.h`, what `EE_CLR` restores) only change when you
 choose to update them from the `.vil`:
 
