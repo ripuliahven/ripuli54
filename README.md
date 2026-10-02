@@ -107,12 +107,14 @@ Both halves have to be flashed separately, but it's a simple copy-paste procedur
 1) Disconnect the keyboard
 2) Reconnect **the left half** while holding the BOOT-button on the RP2040-Zero
 3) You should get a mount-point like /media/<user>/RPI-RP2/
-4) Copy the .ut2 file there and dismount
+4) Copy the .uf2 file there and dismount
 5) Repeat for the right half
 6) Reconnect the left half normally
 
 After flashing a structural change (a layer added/removed, or anything that
-shifts layer indices), press `EE_CLR` once on the keyboard. It's not on the default keymaps but can be easily added in Vial.  Vial's dynamic
+shifts layer indices), press `EE_CLR` once on the keyboard. It's not on the default layers but can be easily added in Vial; with
+the saved `.vil` loaded, the combo Esc + Tab + LShift + Backspace does the
+same. Vial's dynamic
 keymap lives in EEPROM and needs to resync with the new compiled layout.
 `EE_CLR` restores the firmware's default layers (`keymap_vil.h`), but not
 combos, tap dances or key overrides: load the `.vil` in Vial to get those back.
@@ -145,16 +147,17 @@ change, so editing the `.c` files doesn't slow the build down.
 
 ```
 keyboards/silakka54/keymaps/ripuli54/
-    keymap.c    -- process_record_user() chaining the modules; layers come
-                   from vial/ripuli54.vil (see Changing the Layout)
+    keymap.c    -- process_record_user() chaining the modules
+    keymap_vil.h -- default layers, generated from vial/ripuli54.vil
+                   (see Changing the Layout)
     osm.c       -- one-shot mods: stack when chorded, Esc cancels them
     drums.c     -- drum kit: hit/hold counting and cymbal choke (MIDI)
     piano.c     -- piano scale-degree engine, root/scale pickers (MIDI)
     custom_keycodes.h -- DRM_*/SC_* keycodes (MIDI)
     config.h    -- Vial UID/unlock combo, dynamic layer count, MIDI_ADVANCED
     rules.mk    -- feature flags (MIDI_ENABLE, VIAL_ENABLE), sources, debounce
-    vial.json   -- physical layout geometry for the Vial GUI (copied from
-                   the stock silakka54 vial keymap, unmodified)
+    vial.json   -- Vial GUI definition: physical layout (from the stock
+                   silakka54 vial keymap), drum keycode names, MIDI tab
 ```
 
 ### Without MIDI
@@ -162,7 +165,15 @@ Set `MIDI_ENABLE = no` in `rules.mk` to build just the typing layers: the
 drum/piano modules and layers are left out, and Vial gets 9 layers instead
 of 12.
 
+### MIDI in Vial
+The drums can be bound by name from Vial's **User** tab, and QMK's own MIDI
+keycodes (`MI_*`, e.g. All Notes Off) are in the **MIDI** tab. The piano
+and scale/root keys show as hex on purpose: they only make sense in their
+fixed grid positions.
 
-
-## Flashing
-
+When changing the custom keycodes:
+- The drum enum in `custom_keycodes.h` and `customKeycodes` in `vial.json`
+  must stay in the same order -- Vial names keycodes by position.
+- Renumbering any custom keycode changes the values saved in
+  `vial/ripuli54.vil` and `keymap_vil.h`; remap both, or the MIDI layers
+  will play the wrong keys.
