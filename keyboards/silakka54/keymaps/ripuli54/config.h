@@ -2,8 +2,8 @@
 
 #pragma once
 
-// 9 typing layers (0-8) for Vial, plus 3 fixed MIDI layers (9-11, see
-// keymap.c) that live above what's exposed for regular keyboard design.
+// 9 typing layers (0-8) for Vial, plus 3 MIDI layers (9-11: piano, scale
+// picker, drums) above the range meant for regular keyboard design.
 #ifdef MIDI_ENABLE
 #    define DYNAMIC_KEYMAP_LAYER_COUNT 12
 #else

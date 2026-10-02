@@ -11,7 +11,7 @@
 // is the root, negative degrees sit below it, wrapping to the next octave
 // every SCALE_LENGTHS[n] steps either direction. The top/number row picks
 // the root directly (it plays nothing else in this layer); hold a thumb key
-// to turn that same row into the scale picker instead (see _PIANO_SCALE).
+// to turn that same row into the scale picker instead (layer 10).
 #define PIANO_ROOT_NOTE 60 // C4 -- lands on R(0), the right hand's bottom-left key
 #define PIANO_MIDI_CHANNEL 0
 #define PIANO_VELOCITY 100
@@ -27,7 +27,7 @@ static const int8_t SCALE_CHROMATIC[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 static const int8_t *const SCALES[]        = {SCALE_MAJOR, SCALE_MINOR, SCALE_HARM_MINOR, SCALE_MEL_MINOR, SCALE_MAJ_PENTA, SCALE_MIN_PENTA, SCALE_CHROMATIC};
 static const uint8_t        SCALE_LENGTHS[] = {7, 7, 7, 7, 5, 5, 12};
 
-// Root note picked via the _PIANO top row, in physical left-to-right key
+// Root note picked via the piano layer's top row, in physical left-to-right key
 // order (A, A#, B, C, C#, D, D#, E, F, F#, G, G#); values are semitones added
 // relative to the C the hand base notes are defined against.
 static const int8_t ROOT_SEMITONES[12] = {9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8};
