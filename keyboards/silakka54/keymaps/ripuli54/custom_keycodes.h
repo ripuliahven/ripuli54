@@ -36,18 +36,4 @@ enum custom_keycodes {
     SC_ROOT0 = SC_SCALE0 + NUM_SCALES,        // reserves SC_ROOT0 .. SC_ROOT0+11 (see ROOT_SEMITONES)
 };
 
-// Shorthand for the piano grid so the LAYOUT() calls stay readable:
-// L(n)/R(n) is scale-degree slot n (0-17) of the left/right hand.
-#define L(n) (SC_KEY0 + (n))
-#define R(n) (SC_KEY0 + HAND_GRID_SIZE + (n))
-
-// Root-select shorthand: ROOT(n) is the n-th key of the top row, left to
-// right across both hands (see ROOT_SEMITONES for the note each one picks).
-#define ROOT(n) (SC_ROOT0 + (n))
-
-// Scale-select shorthand: SCALE(n) picks SCALES[n] directly (0=major,
-// 1=minor, 2=harmonic minor, 3=melodic minor, 4=major penta,
-// 5=minor penta, 6=chromatic).
-#define SCALE(n) (SC_SCALE0 + (n))
-
 #endif // MIDI_ENABLE
