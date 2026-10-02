@@ -9,7 +9,7 @@ A keymap for Silakka54 intended as the starting point (first and/or final layout
 The majority of relevant characters, symbols, and modifiers are available in familiar positions at least in the relative sense.
 The goal is that you can pretty much start typing like you used to. A lot of personal bias there ofc.
 
-![ripuli54](pics/ripuli54v001.png "ripuli54")
+![ripuli54](pics/ripuli54.png "ripuli54")
 
 ### Base Layer: Natural Language
 
