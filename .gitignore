@@ -12,6 +12,3 @@
 # clangd
 compile_commands.json
 .cache/
-
-# generated from vial/ripuli54.vil by build.sh
-keyboards/silakka54/keymaps/ripuli54/keymap_vil.h

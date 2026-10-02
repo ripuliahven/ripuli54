@@ -62,10 +62,6 @@ if [ ! -L "$KEYMAP_DST" ]; then
     ln -s "../../../../../keyboards/silakka54/keymaps/$KEYMAP" "$KEYMAP_DST"
 fi
 
-echo "==> Generating default layers from vial/$KEYMAP.vil..."
-python3 "$SCRIPT_DIR/util/vil2keymap.py" "$SCRIPT_DIR/vial/$KEYMAP.vil" "$QMK_DIR" \
-    "$KEYMAP_SRC/keymap_vil.h"
-
 # clangd database. Only regenerated when flag inputs change, and before
 # compiling since generation wipes .build/.
 CDB="$SCRIPT_DIR/compile_commands.json"

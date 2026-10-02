@@ -7,8 +7,8 @@
 #include "osm.h"
 #include "piano.h"
 
-// Default layers (keymaps[]) are generated from vial/ripuli54.vil by
-// build.sh. Layers 0-8 are for typing; 9-11 are Piano, Piano scale picker,
+// Default layers (keymaps[]), generated from vial/ripuli54.vil by running
+// util/vil2keymap.py. Layers 0-8 are for typing; 9-11 are Piano, Piano scale picker,
 // and Drums (MIDI builds only).
 #include "keymap_vil.h"
 
