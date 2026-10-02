@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Generate the keymap's default layers from a Vial .vil save file.
+"""Update the keymap's default layers from a Vial .vil save file.
 
-Usage: vil2keymap.py <file.vil> <qmk_dir> <out.h>
-
-The .vil is the source of truth; keymap.c includes the output, so an EEPROM
-reset restores the layout last saved from Vial. Vial saves some old QMK
-names (KC_BSPACE...), translated via vial-qmk's own alias list.
+Usage: util/vil2keymap.py [file.vil [qmk_dir [out.h]]]
+Defaults: vial/ripuli54.vil, build/vial-qmk-silakka54, the keymap's
+keymap_vil.h. Run by hand after saving a layout you want as the default;
+an EEPROM reset restores whatever was last written. Vial saves some old
+QMK names (KC_BSPACE...), translated via vial-qmk's own alias list.
 """
 import json
 import re
@@ -15,10 +15,21 @@ from pathlib import Path
 # Layers from here up are the MIDI ones (see config.h).
 FIRST_MIDI_LAYER = 9
 
-vil_path, qmk_dir, out_path = (Path(p) for p in sys.argv[1:4])
+REPO = Path(__file__).resolve().parent.parent
+DEFAULTS = [
+    REPO / "vial/ripuli54.vil",
+    REPO / "build/vial-qmk-silakka54",
+    REPO / "keyboards/silakka54/keymaps/ripuli54/keymap_vil.h",
+]
+args = [Path(a) for a in sys.argv[1:4]]
+vil_path, qmk_dir, out_path = args + DEFAULTS[len(args):]
+
+alias_header = qmk_dir / "quantum/vial_ensure_keycode.h"
+if not alias_header.exists():
+    sys.exit(f"error: {alias_header} not found -- run ./build.sh once first")
 
 aliases = {}
-for line in (qmk_dir / "quantum/vial_ensure_keycode.h").read_text().splitlines():
+for line in alias_header.read_text().splitlines():
     m = re.match(r"#define\s+(\w+)\s+(\w+)\s*$", line)
     if m and m.group(1) != "kc":
         aliases[m.group(1)] = m.group(2)
@@ -52,6 +63,8 @@ if len(layers) > FIRST_MIDI_LAYER:
 out.append("};")
 text = "\n".join(out) + "\n"
 
-# Only rewrite on change so make doesn't rebuild needlessly.
-if not out_path.exists() or out_path.read_text() != text:
+if out_path.exists() and out_path.read_text() == text:
+    print(f"{out_path.name} already matches {vil_path.name}")
+else:
     out_path.write_text(text)
+    print(f"Updated {out_path.name} from {vil_path.name}")
